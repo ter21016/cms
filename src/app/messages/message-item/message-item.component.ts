@@ -15,13 +15,9 @@ export class MessageItemComponent implements OnInit {
   // This component does not need to subscribe to any events or services
 
   ngOnInit(): void {
-    if (this.message.sender) {
-      const contact = this.contactService.getContact(this.message.sender);
-      if (contact) {
-        this.messageSender = contact.name;
-      } else {
-      this.messageSender = 'Unknown Sender';
-    }
+    const contact = this.contactService.getContact(this.message.sender);
+    if (contact) {
+      this.messageSender = contact.name;
     }
   }
 }

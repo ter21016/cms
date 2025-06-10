@@ -8,7 +8,7 @@ import { DocumentService } from '../document.service';
   styleUrls: ['./document-list.component.css'],
 })
 export class DocumentListComponent implements OnInit {
-  // @Output() selectedDocumentEvent = new EventEmitter();
+  @Output() selectedDocumentEvent = new EventEmitter<Document>();
 
   documents: Document[] = [];
 
@@ -16,9 +16,11 @@ export class DocumentListComponent implements OnInit {
 
   ngOnInit(): void {
     this.documents = this.documentService.getDocuments();
+    this.documentService.documentChangedEvent.subscribe(
+      (documents: Document[]) => {
+        this.documents = documents;
+      }
+    );
   }
 
-  onSelectedDocument(document: Document) {
-    this.documentService.selectedDocumentEvent.emit(document);
-  }
 }

@@ -18,8 +18,6 @@ export class ContactsComponent implements OnInit {
     });
 
   }
-  onSelected(contact: Contact) {
-    this.contactService.contactSelectedEvent.emit(contact);
-  }
+
 }
 

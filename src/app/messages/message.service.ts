@@ -22,7 +22,8 @@ export class MessageService {
   }
 
   getMessage(id: string): Message | null {
-  return this.messages.find(m => m.id === id) ?? null;
+  let message = this.messages.find(m => m.id === id);
+  return message ? message : null;
 }
 
 
