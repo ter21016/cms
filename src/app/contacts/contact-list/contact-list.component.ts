@@ -24,7 +24,7 @@ export class ContactListComponent implements OnInit, OnDestroy {
     );
   }
 
-  ngOnDestroy() {
+  ngOnDestroy(): void{
     this.subscription.unsubscribe();
   }
 

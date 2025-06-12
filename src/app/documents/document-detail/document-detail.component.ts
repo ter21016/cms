@@ -12,25 +12,26 @@ import { WindRefService } from 'src/app/wind-ref.service';
 
 export class DocumentDetailComponent implements OnInit {
   nativeWindow: any;
-  document: Document | undefined;
+  document: Document | null = null;
 
 
 
   constructor(
     private docService: DocumentService,
-    private windRef: WindRefService,
     private router: Router,
-    private route: ActivatedRoute) {
+    private route: ActivatedRoute,
+    private windRef: WindRefService) {
 
     }
 
   ngOnInit(): void {
+    this.nativeWindow = this.windRef.getNativeWindow();
 
 
 
     this.route.params.subscribe((params: Params) => {
 
-      this.nativeWindow = this.windRef.getNativeWindow();
+
       let documentResult = this.docService.getDocument(params['id']);
       if (documentResult) {
         this.document = documentResult;
