@@ -5,6 +5,7 @@ import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-document-list',
+  standalone: false,
   templateUrl: './document-list.component.html',
   styleUrls: ['./document-list.component.css'],
 })

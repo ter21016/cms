@@ -4,6 +4,7 @@ import { ContactService } from '../contact.service';
 import { Subscription } from 'rxjs';
 @Component({
   selector: 'app-contact-list',
+  standalone: false,
   templateUrl: './contact-list.component.html',
   styleUrls: ['./contact-list.component.css'],
 })

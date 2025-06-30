@@ -4,6 +4,7 @@ import { DocumentService } from './document.service';
 
 @Component({
   selector: 'app-documents',
+  standalone: false,
   templateUrl: './documents.component.html',
   styleUrls: ['./documents.component.css'],
 })

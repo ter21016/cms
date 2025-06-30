@@ -6,6 +6,7 @@ import { WindRefService } from 'src/app/wind-ref.service';
 
 @Component({
   selector: 'app-document-detail',
+  standalone: false,
   templateUrl: './document-detail.component.html',
   styleUrls: ['./document-detail.component.css'],
 })

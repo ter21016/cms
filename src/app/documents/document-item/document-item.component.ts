@@ -3,6 +3,7 @@ import { Document } from '../document.model';
 
 @Component({
   selector: 'app-document-item',
+  standalone: false,
   templateUrl: './document-item.component.html',
   styleUrls: ['./document-item.component.css'],
 })

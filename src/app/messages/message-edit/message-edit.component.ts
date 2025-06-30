@@ -11,6 +11,7 @@ import { MessageService } from '../message.service';
 
 @Component({
   selector: 'app-message-edit',
+  standalone: false,
   templateUrl: './message-edit.component.html',
   styleUrls: ['./message-edit.component.css'],
 })
