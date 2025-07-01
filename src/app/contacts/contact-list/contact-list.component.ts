@@ -13,6 +13,7 @@ export class ContactListComponent implements OnInit, OnDestroy {
   subscription: Subscription;
   groupedContacts: Contact[] = [];
   individualContacts: Contact[] = [];
+  term: string = '';
 
   // @Output() selectedContactEvent = new EventEmitter<Contact>();
 
@@ -30,6 +31,11 @@ export class ContactListComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void{
     this.subscription.unsubscribe();
   }
+
+  search(value: string) {
+    this.term = value;
+  }
+
 
 
 }

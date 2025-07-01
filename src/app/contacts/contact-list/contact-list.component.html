@@ -1,12 +1,25 @@
 <div class="container-fluid">
-  <div class="row contact-list-header">
-    <div class="col-xs-8 vcenter">
-      <h2>Contacts</h2>
-    </div>
-    <div class="col-xs-4 vcenter" style="padding: 0.6rem">
-      <a [routerLink]="['new']" class="btn btn-success">New Contact</a>
+  <div class="row">
+  <div class="col-xs-12">
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <div class="row">
+          <span class="title pad-left-right">Contacts</span>
+        </div>
+        <div class="row">
+          <div class="input-group pull-left pad-left-right col-xs-7">
+            <!-- Add the search box input field here -->
+            <input #searchBox type="text" class="form-control" placeholder="Search contacts...">
+            <div class="glyphicon glyphicon-search input-group-addon" (click)="search(searchBox.value)"></div>
+          </div>
+          <div class="pull-right pad-left-right">
+            <a class="btn btn-success" [routerLink]="['new']">New Contact</a>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
+</div>
 
   <div class="row">
     <div class="col-xs-12">
@@ -16,7 +29,7 @@
            [cdkDropListData]="contacts"
            [cdkDropListConnectedTo]="['groupList']">
         <app-contact-item
-          *ngFor="let contact of contacts"
+          *ngFor="let contact of contacts | contactsFilter: term"
           [contact]="contact"
           cdkDrag
           [cdkDragData]="contact">
