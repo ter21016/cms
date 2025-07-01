@@ -10,8 +10,8 @@ import { ContactService } from '../contact.service';
   styleUrls: ['./contact-detail.component.css'],
 })
 export class ContactDetailComponent implements OnInit {
-   contact: Contact | null = null;
-edit: string|any[]|null|undefined;
+  contact: Contact | null = null;
+  edit: string|any[]|null|undefined;
 
   constructor(
     private contactService: ContactService,

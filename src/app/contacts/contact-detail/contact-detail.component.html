@@ -10,7 +10,8 @@
  <img [src]="contact?.imageUrl" [alt]="contact?.name" height="90px" />
       </div>
       <div class="col-xs-6 vcenter">
-        <a class="btn btn-primary btn-sm" [routerLink]="edit">Edit</a>
+        <a class="btn btn-primary btn-sm" [routerLink]="['/contacts', contact?.id, 'edit']">Edit</a>
+
         <a class="btn btn-danger btn-sm" (click)="onDelete()">Delete</a>
       </div>
     </div>
@@ -27,4 +28,13 @@
       </div>
     </div>
   </div>
+  <div *ngIf="(contact?.group?.length ?? 0) > 0" class="mt-3">
+  <h5>Contacts in Team:</h5>
+  <div *ngFor="let member of contact?.group" class="d-flex align-items-center mb-2">
+    <img [src]="member.imageUrl" [alt]="member.name" height="50" class="me-2 rounded">
+    <span>{{ member.name }}</span>
+  </div>
+</div>
+
+
 </div>

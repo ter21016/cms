@@ -10,7 +10,9 @@ import { Subscription } from 'rxjs';
 })
 export class ContactListComponent implements OnInit, OnDestroy {
   contacts: Contact[] = []
-  subscription: Subscription
+  subscription: Subscription;
+  groupedContacts: Contact[] = [];
+  individualContacts: Contact[] = [];
 
   // @Output() selectedContactEvent = new EventEmitter<Contact>();
 

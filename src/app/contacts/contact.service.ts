@@ -54,7 +54,7 @@ export class ContactService {
 
   updateContact(original: Contact, newContact: Contact) {
     if (!original || !newContact) return;
-    const pos = this.contacts.indexOf(original);
+    const pos = this.contacts.findIndex(c => c.id === original.id);
     if (pos < 0) return;
 
     newContact.id = original.id;

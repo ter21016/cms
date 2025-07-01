@@ -4,16 +4,24 @@
       <h2>Contacts</h2>
     </div>
     <div class="col-xs-4 vcenter" style="padding: 0.6rem">
-      <a routerLink="new" class="btn btn-success">New Contact</a>
+      <a [routerLink]="['new']" class="btn btn-success">New Contact</a>
     </div>
   </div>
-  <div class="row contact-list-container">
-    <div class="col-xs-12">
-      <app-contact-item
-        *ngFor="let contact of contacts"
-        [contact]="contact"
 
-      ></app-contact-item>
+  <div class="row">
+    <div class="col-xs-12">
+      <div class="list-group"
+           cdkDropList
+           id="contactsList"
+           [cdkDropListData]="contacts"
+           [cdkDropListConnectedTo]="['groupList']">
+        <app-contact-item
+          *ngFor="let contact of contacts"
+          [contact]="contact"
+          cdkDrag
+          [cdkDragData]="contact">
+        </app-contact-item>
+      </div>
     </div>
   </div>
 </div>

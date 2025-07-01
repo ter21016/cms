@@ -22,6 +22,9 @@ import { AppRoutingModule } from './app-routing.module';
 
 import { ContactEditComponent } from './contacts/contact-edit/contact-edit.component';
 import { MessagesComponent } from './messages/messages.component';
+import { FormsModule } from '@angular/forms';
+import { DragDropModule } from '@angular/cdk/drag-drop';
+
 
 
 @NgModule({
@@ -44,9 +47,10 @@ import { MessagesComponent } from './messages/messages.component';
     MessagesComponent,
 
 
+
   ],
 
-  imports: [BrowserModule, AppRoutingModule, DropdownDirective],
+  imports: [BrowserModule, FormsModule, AppRoutingModule, DragDropModule],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
