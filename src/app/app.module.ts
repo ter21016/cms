@@ -25,6 +25,10 @@ import { MessagesComponent } from './messages/messages.component';
 import { FormsModule } from '@angular/forms';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { ContactsFilterPipe } from './contacts/contacts-filter.pipe';
+import { HttpClientModule } from '@angular/common/http';
+
+
+
 
 
 
@@ -52,7 +56,7 @@ import { ContactsFilterPipe } from './contacts/contacts-filter.pipe';
 
   ],
 
-  imports: [BrowserModule, FormsModule, AppRoutingModule, DragDropModule],
+  imports: [BrowserModule, FormsModule, AppRoutingModule, DragDropModule, HttpClientModule],
   bootstrap: [AppComponent],
 })
 export class AppModule {}

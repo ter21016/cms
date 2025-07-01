@@ -24,7 +24,7 @@ export class DocumentEditComponent implements OnInit {
   ngOnInit(): void {
     this.route.params.subscribe((params: Params) => {
       if (params['id']) {
-        this.originalDocument = this.documentService.getDocument(params['id']);
+        this.originalDocument = this.documentService.getDocument(params['id']) ?? null;
       } else {
         this.originalDocument = null;
       }

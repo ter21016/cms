@@ -1,7 +1,7 @@
 import { EventEmitter, Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 import { Contact } from './contact.model';
-import { MOCKCONTACTS } from './MOCKCONTACTS';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Injectable({
   providedIn: 'root',
@@ -10,16 +10,28 @@ export class ContactService {
   contactSelectedEvent = new EventEmitter<Contact>();
   contactListChangedEvent = new Subject<Contact[]>();
 
+  private contactUrl =
+    'https://cse-cms-default-rtdb.firebaseio.com/contacts.json';
+
   private contacts: Contact[] = [];
   private maxContactId: number;
 
-  constructor() {
-    this.contacts = MOCKCONTACTS;
-    this.maxContactId = this.getMaxId();
-  }
+   constructor(private http: HttpClient) {}
 
 
   getContacts(): Contact[]  {
+    this.http
+      .get<Contact[]>(this.contactUrl)
+      .subscribe((contacts: Contact[]) => {
+        this.contacts = contacts;
+        this.maxContactId = this.getMaxId();
+        this.contacts.sort((a, b) => {
+          if (a < b) return -1;
+          if (a > b) return 1;
+          return 0;
+        });
+        this.contactListChangedEvent.next(this.contacts.slice());
+      });
     return this.contacts.slice();
   }
 
