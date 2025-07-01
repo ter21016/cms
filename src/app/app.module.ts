@@ -24,6 +24,7 @@ import { ContactEditComponent } from './contacts/contact-edit/contact-edit.compo
 import { MessagesComponent } from './messages/messages.component';
 import { FormsModule } from '@angular/forms';
 import { DragDropModule } from '@angular/cdk/drag-drop';
+import { ContactsFilterPipe } from './contacts/contacts-filter.pipe';
 
 
 
@@ -45,6 +46,7 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
     DocumentEditComponent,
     ContactEditComponent,
     MessagesComponent,
+    ContactsFilterPipe,
 
 
 
