@@ -7,7 +7,7 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
 // import the routing file to handle the default (index) route
-var index = require('./server/routes/app');
+const index = require('./server/routes/app');
 
 // ... ADD CODE TO IMPORT YOUR ROUTING FILES HERE ...
 const messageRoutes = require('./server/routes/messages');
@@ -58,7 +58,7 @@ app.use('/documents', documentRoutes);
 
 // Tell express to map all other non-defined routes back to the index page
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'dist/cms/index.html'));
+  res.sendFile(path.join(__dirname, '../../dist/cms/index.html'));
 });
 
 // Define the port address and tell express to use this port
