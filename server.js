@@ -55,7 +55,7 @@ app.use('/documents', documentRoutes);
 // ... ADD YOUR CODE TO MAP YOUR URL'S TO ROUTING FILES HERE ...
 
 // Tell express to map all other non-defined routes back to the index page
-app.get('/:wildcard(*)', (req, res) => {
+app.get(/.*/, (req, res) => {
   res.sendFile(path.join(__dirname, 'dist/cms/index.html'));
 });
 
