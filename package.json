@@ -3,7 +3,9 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "node server.js",
+    "start": "ng serve",
+    "start:server": "node server.js",
+    "server": "ts-node --transpile-only src/main.ts",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
@@ -23,6 +25,8 @@
     "cls": "^0.1.5",
     "cookie-parser": "^1.4.7",
     "express": "^5.1.0",
+    "mongoose": "^7.8.7",
+    "mongoose-unique-validator": "^4.0.1",
     "morgan": "^1.10.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
@@ -39,6 +43,7 @@
     "karma-coverage": "~2.2.0",
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
+    "nodemon": "^3.1.10",
     "typescript": "~5.7.2"
   }
 }
