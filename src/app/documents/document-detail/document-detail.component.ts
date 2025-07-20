@@ -32,10 +32,10 @@ export class DocumentDetailComponent implements OnInit {
 
     this.route.params.subscribe((params: Params) => {
 
-
-      let documentResult = this.docService.getDocument(params['id']);
-      if (documentResult) {
-        this.document = documentResult;
+      const documentId = params['id'];
+      const foundDocument = this.docService.getDocument(documentId);
+      if (foundDocument) {
+        this.document = foundDocument;
       }
     });
   }
@@ -54,4 +54,3 @@ export class DocumentDetailComponent implements OnInit {
   }
 
 }
-

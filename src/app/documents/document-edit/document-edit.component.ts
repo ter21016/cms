@@ -1,62 +1,69 @@
-import { Component, OnInit } from '@angular/core';
-import { Document } from '../document.model';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { NgForm } from '@angular/forms';
 import { ActivatedRoute, Params, Router } from '@angular/router';
+import { Document } from '../document.model';
 import { DocumentService } from '../document.service';
 
 @Component({
   selector: 'app-document-edit',
   standalone: false,
   templateUrl: './document-edit.component.html',
-  styleUrls: ['./document-edit.component.css']
+  styleUrls: ['./document-edit.component.css'],
 })
-export class DocumentEditComponent implements OnInit {
-  originalDocument: Document | null;
+export class DocumentEditComponent implements OnInit, OnDestroy {
+  private destroy$ = new Subject<void>();
+  originalDocument: Document;
   document: Document;
   editMode: boolean = false;
 
   constructor(
-    private documentService: DocumentService,
-    private route: ActivatedRoute,
-    private router: Router
-  ) { }
+    private docService: DocumentService,
+    private router: Router,
+    private route: ActivatedRoute
+  ) {
+    // Initialize document to prevent undefined errors
+    this.document = new Document('', '', '', '');
+  }
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
   ngOnInit(): void {
     this.route.params.subscribe((params: Params) => {
-      if (params['id']) {
-        this.originalDocument = this.documentService.getDocument(params['id']) ?? null;
-      } else {
-        this.originalDocument = null;
-      }
-      if (this.originalDocument) {
-        this.editMode = true;
-        this.document = JSON.parse(JSON.stringify(this.originalDocument));
-      } else {
+      let id = params['id'];
+      if (id === undefined || id === null) {
         this.editMode = false;
-        this.document = new Document("", "", "", "");
+        // Initialize empty document for new document creation
+        this.document = new Document('', '', '', '');
+        return;
       }
+      this.originalDocument = this.docService.getDocument(id)!;
+      if (
+        this.originalDocument === undefined ||
+        this.originalDocument === null
+      ) {
+        return;
+      }
+      this.editMode = true;
+      this.document = JSON.parse(JSON.stringify(this.originalDocument));
     });
   }
 
   onSubmit(form: NgForm) {
-     const value = form.value;
-    let doc = new Document(
-      "0",
-      value.name,
-      value.description,
-      value.url
-    );
-    if(this.editMode === true) {
-      this.documentService.updateDocument(this.originalDocument!, doc);
+    let value = form.value;
+    let newDocument = new Document('', value.name, value.description, value.url);
+    if (this.editMode) {
+      this.docService.updateDocument(this.originalDocument, newDocument);
     } else {
-      this.documentService.addDocument(doc);
-    };
-    this.editMode = false;
-    this.router.navigate(['/documents']);
+      this.docService.addDocument(newDocument);
+    }
+    this.onCancel();
   }
 
-  onCancel(): void {
-    this.router.navigate(['/documents']);
+  onCancel() {
+    this.router.navigate(['../'], { relativeTo: this.route });
   }
-
 }

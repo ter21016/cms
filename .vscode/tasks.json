@@ -37,6 +37,14 @@
           }
         }
       }
+    },
+    {
+      "type": "npm",
+      "script": "start:server",
+      "isBackground": true,
+      "label": "Start Backend Server",
+      "group": "build",
+      "problemMatcher": []
     }
   ]
 }

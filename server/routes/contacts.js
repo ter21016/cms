@@ -1,4 +1,4 @@
-const sequenceGenerator = require('../utils/sequenceGenerator');
+const { nextId } = require('./sequenceGenerator');
 const Contact = require('../models/contact');
 
 // Contact
@@ -22,31 +22,37 @@ router.get("/", (req, res, next) => {
     });
 });
 
-router.post("/", (req, res, next) => {
-  const maxContactId = sequenceGenerator.nextId("contacts");
+router.post("/", async (req, res, next) => {
+  try {
+    console.log('POST /contacts - Request body:', req.body);
+    
+    const maxContactId = await nextId("contacts");
+    console.log('Generated contact ID:', maxContactId);
 
-  const contact = new Contact({
-    id: maxContactId,
-    name: req.body.name,
-    email: req.body.email,
-    phone: req.body.phone,
-    imageUrl: req.body.imageUrl,
-    group: req.body.group,
-  });
-  contact
-    .save()
-    .then((createdContact) => {
-      res.status(201).json({
-        message: "Contact added successfully.",
-        contact: createdContact,
-      });
-    })
-    .catch((err) => {
-      res.status(500).json({
-        message: "There was a problem creating the contact.",
-        error: err,
-      });
+    const contact = new Contact({
+      id: maxContactId,
+      name: req.body.name,
+      email: req.body.email,
+      phone: req.body.phone,
+      imageUrl: req.body.imageUrl,
+      group: req.body.group,
     });
+
+    console.log('Contact to save:', contact);
+    const createdContact = await contact.save();
+    console.log('Contact saved successfully:', createdContact);
+    
+    res.status(201).json({
+      message: "Contact added successfully.",
+      contact: createdContact,
+    });
+  } catch (err) {
+    console.error('Error creating contact:', err);
+    res.status(500).json({
+      message: "There was a problem creating the contact.",
+      error: err.message,
+    });
+  }
 });
 
 router.put("/:id", (req, res, next) => {

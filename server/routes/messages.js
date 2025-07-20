@@ -1,5 +1,6 @@
-const sequenceGenerator = require("../utils/sequenceGenerator");
+const { nextId } = require("./sequenceGenerator");
 const Message = require("../models/message");
+const Contact = require("../models/contact");
 
 // Message
 var express = require("express");
@@ -7,6 +8,7 @@ var router = express.Router();
 
 router.get("/", (req, res, next) => {
   Message.find()
+    .populate("sender")
     .then((msgs) => {
       res.status(200).json({
         message: "Retrieved messages from database.",
@@ -21,30 +23,46 @@ router.get("/", (req, res, next) => {
     });
 });
 
-router.post("/", (req, res, next) => {
-  const maxDocumentId = sequenceGenerator.nextId("messages");
+router.post("/", async (req, res, next) => {
+  try {
+    console.log('POST /messages - Request body:', req.body);
+    
+    const maxMessageId = await nextId("messages");
+    console.log('Generated message ID:', maxMessageId);
 
-  const msg = new Message({
-    id: maxDocumentId,
-    name: req.body.name,
-    description: req.body.description,
-    url: req.body.url,
-  });
-  msg
-    .save()
-    .then((createdMsg) => {
-      res.status(201).json({
-        message: "Message added successfully.",
-        messageObj: createdMsg,
+    // Find the contact ObjectId by the string ID
+    const senderContact = await Contact.findOne({ id: req.body.sender });
+    if (!senderContact) {
+      return res.status(400).json({
+        message: "Sender contact not found.",
+        error: `No contact found with ID: ${req.body.sender}`
       });
-    })
-    .catch((err) => {
-      res.status(500).json({
-        message: "There was a problem creating the message.",
-        error: err,
-      });
+    }
+
+    const msg = new Message({
+      id: maxMessageId,
+      subject: req.body.subject,
+      msgText: req.body.msgText,
+      sender: senderContact._id
     });
+
+    console.log('Message to save:', msg);
+    const createdMsg = await msg.save();
+    console.log('Message saved successfully:', createdMsg);
+
+    res.status(201).json({
+      message: "Message added successfully.",
+      messageObj: createdMsg
+    });
+  } catch (err) {
+    console.error('Error creating message:', err);
+    res.status(500).json({
+      message: "There was a problem creating the message.",
+      error: err.message
+    });
+  }
 });
+
 
 router.put("/:id", (req, res, next) => {
   Message.findOne({ id: req.params.id })

@@ -1,62 +1,105 @@
-import { EventEmitter,Injectable } from '@angular/core';
+import { EventEmitter, Injectable } from '@angular/core';
 import { Message } from './message.model';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MessageService {
-  messageChangedEvent = new EventEmitter<Message[]>();
+  messageChangedEvent = new Subject<Message[]>();
 
-  private contactUrl =
-    'https://cse-cms-default-rtdb.firebaseio.com/messages.json';
+  private messagesUrl = 'http://localhost:3000/messages';
   private messages: Message[] = [];
-  private maxMessageId: number = 0;
 
   constructor(private http: HttpClient) {}
 
-
-  //#region "Firebase"
-  // GET REQUEST
-  getMessages(): Message[] {
-    this.http.get<Message[]>(this.contactUrl).subscribe((msgs: Message[]) => {
-      this.messages = msgs;
-      this.maxMessageId = this.getMaxId();
-      this.messages.sort((a, b) => {
-        if (a < b) return -1;
-        if (a > b) return 1;
-        return 0;
+  //#region "CRUD"
+  getMessages() {
+    this.http
+      .get<{ message: string; messageObjs: Message[] }>(this.messagesUrl)
+      .subscribe({
+        next: (res) => {
+          console.log(res.message);
+          this.messages = res.messageObjs;
+          this.sortAndSend();
+        },
+        error: (err) => {
+          console.error('Error getting messages:', err);
+          console.error('Error details:', err?.error || err);
+        },
       });
-      this.messageChangedEvent.next(this.messages.slice());
-    });
-
-    return this.messages.slice();
   }
 
-  // PUT REQUEST
-  storeMessages() {
+  addMessage(newMessage: Message) {
+    if (!newMessage || !newMessage.subject || !newMessage.msgText) {
+      console.error('Missing required fields');
+      return;
+    }
+
     this.http
-      .put(this.contactUrl, JSON.stringify(this.messages), {
+      .post<{ message: string; messageObj: Message }>(
+        this.messagesUrl,
+        {
+          subject: newMessage.subject,
+          msgText: newMessage.msgText,
+          sender: newMessage.sender,
+        }, // don't send 'id'
+        { headers: new HttpHeaders().set('Content-Type', 'application/json') }
+      )
+      .subscribe({
+        next: (res) => {
+          console.log(res.message);
+          this.messages.push(res.messageObj);
+          this.sortAndSend();
+        },
+        error: (err) => {
+          console.error('Error adding message:', err);
+          console.error('Error details:', err?.error || err);
+        },
+      });
+  }
+
+  updateMessage(original: Message, newMessage: Message) {
+    if (!newMessage || !original) return;
+    const pos = this.messages.indexOf(original);
+    if (pos < 0) return;
+
+    newMessage.id = original.id;
+    this.http
+      .put<{ message: string }>(`${this.messagesUrl}/${original.id}`, newMessage, {
         headers: new HttpHeaders().set('Content-Type', 'application/json'),
       })
-      .subscribe(() => {
-        this.messages.sort((a, b) => {
-          if (a < b) return -1;
-          if (a > b) return 1;
-          return 0;
-        });
-        this.messageChangedEvent.next(this.messages.slice());
+      .subscribe({
+        next: (res) => {
+          console.log(res.message);
+          this.messages[pos] = newMessage;
+          this.sortAndSend();
+        },
+        error: (err) => {
+          console.error('Error updating message:', err);
+          console.error('Error details:', err?.error || err);
+        },
       });
   }
-  //#endregion "Firebase"
 
-  //#region "CRUD"
-  addMessage(newMessage: Message) {
-    if (newMessage === null || newMessage === undefined) return;
-    this.maxMessageId++;
-    newMessage.id = `${this.maxMessageId}`;
-    this.messages.push(newMessage);
-    this.storeMessages();
+  deleteMessage(message: Message) {
+    if (!message) return;
+    const pos = this.messages.indexOf(message);
+    if (pos < 0) return;
+    this.http
+      .delete<{ message: string }>(`${this.messagesUrl}/${message.id}`)
+      .subscribe({
+        next: (res) => {
+          console.log(res.message);
+          this.messages.splice(pos, 1);
+          this.sortAndSend();
+        },
+        error: (err) => {
+          console.error('Error deleting message:', err);
+          console.error('Error details:', err?.error || err);
+        },
+      });
   }
 
   getMessage(id: string): Message | undefined {
@@ -65,12 +108,13 @@ export class MessageService {
   //#endregion "CRUD"
 
   //#region "Helpers"
-  getMaxId(): number {
-    let maxId = 0;
-    this.messages.forEach((m) => {
-      if (+m.id > maxId) maxId = +m.id;
+  sortAndSend() {
+    this.messages.sort((a, b) => {
+      if (a.subject < b.subject) return -1;
+      if (a.subject > b.subject) return 1;
+      return 0;
     });
-    return maxId;
+    this.messageChangedEvent.next(this.messages.slice());
   }
   //#endregion "Helpers"
 }

@@ -1,4 +1,4 @@
-const sequenceGenerator = require('../utils/sequenceGenerator');
+const { nextId } = require('./sequenceGenerator');
 const Document = require('../models/document');
 
 var express = require('express');
@@ -20,30 +20,39 @@ router.get("/", (req, res, next) => {
     });
 });
 
-router.post("/", (req, res, next) => {
-  const maxDocumentId = sequenceGenerator.nextId("documents");
+router.post("/", async (req, res, next) => {
+  try {
+    console.log('POST /documents - Request body:', req.body);
+    
+    const maxDocumentId = await nextId("documents");
+    console.log('Generated document ID:', maxDocumentId);
 
-  const document = new Document({
-    id: maxDocumentId,
-    name: req.body.name,
-    description: req.body.description,
-    url: req.body.url,
-  });
-  document
-    .save()
-    .then((createdDocument) => {
-      res.status(201).json({
-        message: "Document added successfully.",
-        document: createdDocument,
-      });
-    })
-    .catch((err) => {
-      res.status(500).json({
-        message: "There was a problem creating the document.",
-        error: err,
-      });
+    const document = new Document({
+      id: maxDocumentId.toString(),
+      name: req.body.name,
+      description: req.body.description,
+      url: req.body.url,
     });
+
+    console.log('Document to save:', document);
+    const createdDocument = await document.save();
+    console.log('Document saved successfully:', createdDocument);
+
+    res.status(201).json({
+      message: "Document added successfully.",
+      document: createdDocument,
+    });
+  } catch (err) {
+    console.error('Error creating document:', err);
+    res.status(500).json({
+      message: "There was a problem creating the document.",
+      error: err.message,
+    });
+  }
 });
+
+
+
 
 router.put("/:id", (req, res, next) => {
   Document.findOne({ id: req.params.id })

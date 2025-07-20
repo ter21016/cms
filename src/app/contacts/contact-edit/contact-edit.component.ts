@@ -28,7 +28,8 @@ export class ContactEditComponent implements OnInit {
     this.route.params.subscribe((params: Params) => {
       const id = params['id'];
       if (id) {
-        this.originalContact = this.contactService.getContact(id);
+        const foundContact = this.contactService.getContact(id);
+        this.originalContact = foundContact === undefined ? null : foundContact;
         if (!this.originalContact) {
           this.router.navigate(['/contacts']);
           return;
@@ -38,7 +39,8 @@ export class ContactEditComponent implements OnInit {
         this.groupContacts = this.contact.group ?? [];
       } else {
         this.editMode = false;
-        this.contact = new Contact('', '', '', '', '', []);
+        this.contact = new Contact('', '', '', '', []);
+        this.contact.id = '';
       }
     });
   }
@@ -48,13 +50,13 @@ export class ContactEditComponent implements OnInit {
     const value = form.value;
 
     const newContact = new Contact(
-      this.contact?.id ?? '0',
       value.name,
       value.email,
       value.phone,
       value.imageUrl,
       this.groupContacts
     );
+    newContact.id = this.contact?.id ?? '0';
 
     if (this.editMode && this.originalContact) {
       this.contactService.updateContact(this.originalContact, newContact);
